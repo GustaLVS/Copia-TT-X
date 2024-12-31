@@ -9,7 +9,27 @@ function App() {
 
   const [tweets, setTweets] = useState([])
 
-  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      addNewRandomTweets()
+    }, 20000);
+    return () => clearInterval(interval)
+  }, [])
+
+  const addNewRandomTweets =() => {
+    const randomTweets = [
+      'Acabei de entrar no clone do Twitter! Estou animado para me conectar com todos aqui. 👋 #NovoUsuário',
+      'Caralhoooooo!!!! O Vasco da Gama está praticando muito futebol essa noite em São Januário, EU VOU GOZAAAARRRR!!!! VAAAMOOO #5X0VASCAO',
+      'O Vasco da Gama acaba de assumir a liderança do Brasileirão 2025 e vai rumo ao titulo #PENTADOVASCO',
+      'VITOOOOOOORIA de GABRIEL BORTOLETO em INTERLAGOS, a bordo de uma SAUBER Bortoleto fez a maior corrida de um piloto na F1 #BORBOLETOÉREI #F1NABAND',
+      'É CAMPEÃO, o VASCO DA GAMA ACABA DE SE TORNAR PENTA CAMPEÃO BRASILEIRO DE FUTEBOL #VASCOOOOO',
+      ]
+
+      const randomTweet = randomTweets[Math.floor(Math.random() * randomTweets.length)]
+
+      addNewTweet(randomTweet, Math.random() > 0.7 )
+
+  }
 
   const addNewTweet = (content, includeImage = false) => {
     const NewTweet = {
