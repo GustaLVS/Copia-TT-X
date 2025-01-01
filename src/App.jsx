@@ -4,6 +4,10 @@ import { Tweet } from "./components/Tweet/indexTW"
 import { v4 } from "uuid"
 import { getAvatar, getRandomImage } from "./utils/gerarImagens"
 import { useEffect, useState } from "react"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faSearch } from "@fortawesome/free-solid-svg-icons"
+import { TrendItem } from "./components/TrendItem/indexTI"
+import  { FollowItem } from "./components/FollowItem/indexFI"
 
 function App() {
 
@@ -12,7 +16,7 @@ function App() {
   useEffect(() => {
     const interval = setInterval(() => {
       addNewRandomTweets()
-    }, 20000);
+    }, 2000);
     return () => clearInterval(interval)
   }, [])
 
@@ -67,6 +71,33 @@ function App() {
           ))}
         </div>
       </main>
+      <aside className="hidden xl:block w-80 px-4">
+        <div className="sticky top-0 pt-2">
+          <div className="relative">
+            <FontAwesomeIcon icon={faSearch} className="absolute top-3 left-3 text-gray-500"/>
+            <input placeholder="Search Twitter" className="w-full bg-gray-800 text-white rounded-full outline-none py-2 pl-19 pr-4"/>
+          </div>
+
+          <div className="bg-gray-800 rounded-xl mt-4 p-4">
+            <h2 className="font-bold text-xl mb-4">Subscribe to Premium</h2>
+            <p className="text-gray-500 mb-4">Subscribe to unlock new features and if eligible, receive a share of ads revenue.</p>
+            <button className="bg-twitter-blue text-white font-bold py-2 px-4 rounded-full hover:bg-blue-600 transition duration-200">Subscribe</button>
+          </div>
+          <div className="bg-gray-800 rounded-xl mt-4 p-4">
+            <h2 className="font-bold text-xl mb-4">Whats happening</h2> 
+            <TrendItem category='NFL - LIFE' name='Cardinals at Bills' tweetCount="1,342"/>
+            <TrendItem category='Sports - Trending' name='Kyle Dugger' tweetCount="1,342"/>
+            <TrendItem category='Sports - Trending' name='Anthony Richardson' tweetCount="13,445"/>
+            <TrendItem category='Sports - Trending' name='Bryce Young' tweetCount="5,455"/>
+            <TrendItem category='Sports - Trending' name='Daboll' tweetCount="1,342"/>
+          </div>
+          <div className="bg-gray-800 rounded-xl mt-4 p-4">
+            <h2 className="font-bold text-xl mb-4">Who to follow</h2>
+            <FollowItem name="Bill Gates" username="BillGates"/>
+            <FollowItem name="Will Smith" username="WillS"/>
+          </div>
+        </div>
+      </aside>
       </div>
     </>
   )
