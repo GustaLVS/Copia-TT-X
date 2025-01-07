@@ -16,7 +16,7 @@ function App() {
   useEffect(() => {
     const interval = setInterval(() => {
       addNewRandomTweets()
-    }, 2000);
+    }, 20000);
     return () => clearInterval(interval)
   }, [])
 
