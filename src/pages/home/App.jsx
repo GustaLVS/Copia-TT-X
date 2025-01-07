@@ -1,13 +1,13 @@
-import { Sidebar } from "./components/sidebar/indexSBD"
-import { TwitterForm } from "./components/TwitterForm/indexTF"
-import { Tweet } from "./components/Tweet/indexTW"
+import { Sidebar } from "../../components/sidebar/indexSBD"
+import { TwitterForm } from "../../components/TwitterForm/indexTF"
+import { Tweet } from "../../components/Tweet/indexTW"
 import { v4 } from "uuid"
-import { getAvatar, getRandomImage } from "./utils/gerarImagens"
+import { getAvatar, getRandomImage } from "../../utils/gerarImagens"
 import { useEffect, useState } from "react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faSearch } from "@fortawesome/free-solid-svg-icons"
-import { TrendItem } from "./components/TrendItem/indexTI"
-import  { FollowItem } from "./components/FollowItem/indexFI"
+import { TrendItem } from "../../components/TrendItem/indexTI"
+import  { FollowItem } from "../../components/FollowItem/indexFI"
 
 function App() {
 
