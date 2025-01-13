@@ -1,13 +1,13 @@
 import express from "express";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from 'bcrypt';
-import cors from 'cors'
+import cors from 'cors';
 
 const prisma = new PrismaClient();
 
 const app = express();
 app.use(express.json());
-app.use(cors())
+app.use(cors());
 
 app.post('/usuarios', async (req, res) => {
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
@@ -25,18 +25,18 @@ app.post('/usuarios', async (req, res) => {
 });
 
 app.get("/usuarios", async (req, res) => {
-    let users = []
+    let users = [];
 
-    if(req.query){
+    if (req.query) {
         users = await prisma.user.findMany({
             where: {
                 name: req.query.name,
                 email: req.query.email,
-                age: req.query.age
-            }
-        })
+                age: req.query.age,
+            },
+        });
     } else {
-        users = await prisma.user.findMany()
+        users = await prisma.user.findMany();
     }
 
     res.status(200).json(users);
@@ -48,7 +48,6 @@ app.put("/usuarios/:id", async (req, res) => {
         where: {
             id: req.params.id,
         },
-
         data: {
             email: req.body.email,
             name: req.body.name,
@@ -62,14 +61,44 @@ app.put("/usuarios/:id", async (req, res) => {
 app.delete('/usuarios/:id', async (req, res) => {
     await prisma.user.delete({
         where: {
-            id: req.params.id
-        }
-    })
+            id: req.params.id,
+        },
+    });
 
-    res.status(200).json({message: "usuario deletados"})
-})
+    res.status(200).json({ message: "Usuário deletado" });
+});
 
-app.listen(3000);
+app.post('/login', async (req, res) => {
+    const { email, password } = req.body;
+
+    const user = await prisma.user.findUnique({
+        where: { email },
+    });
+
+    if (!user) {
+        return res.status(404).json({ error: "Usuário não encontrado" });
+    }
+
+    const passwordMatch = await bcrypt.compare(password, user.password);
+
+    if (!passwordMatch) {
+        return res.status(401).json({ error: "Senha incorreta" });
+    }
+
+    res.status(200).json({
+        message: "Login bem-sucedido",
+        user: {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+        },
+    });
+});
+
+app.listen(3000, () => {
+    console.log("Servidor rodando na porta 3000");
+});
+
 
 /*
 BANCO DE DADOS

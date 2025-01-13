@@ -1,106 +1,150 @@
-import { Sidebar } from "../../components/sidebar/indexSBD"
-import { TwitterForm } from "../../components/TwitterForm/indexTF"
-import { Tweet } from "../../components/Tweet/indexTW"
-import { v4 } from "uuid"
-import { getAvatar, getRandomImage } from "../../utils/gerarImagens"
-import { useEffect, useState } from "react"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faSearch } from "@fortawesome/free-solid-svg-icons"
-import { TrendItem } from "../../components/TrendItem/indexTI"
-import  { FollowItem } from "../../components/FollowItem/indexFI"
+import { Sidebar } from "../../components/sidebar/indexSBD";
+import { TwitterForm } from "../../components/TwitterForm/indexTF";
+import { Tweet } from "../../components/Tweet/indexTW";
+import { v4 } from "uuid";
+import { getAvatar, getRandomImage } from "../../utils/gerarImagens";
+import { useEffect, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import { TrendItem } from "../../components/TrendItem/indexTI";
+import { FollowItem } from "../../components/FollowItem/indexFI";
 
 function App() {
+    const [tweets, setTweets] = useState([]);
 
-  const [tweets, setTweets] = useState([])
+    useEffect(() => {
+        const interval = setInterval(() => {
+            addNewRandomTweets();
+        }, 20000);
+        return () => clearInterval(interval);
+    }, []);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      addNewRandomTweets()
-    }, 20000);
-    return () => clearInterval(interval)
-  }, [])
+    const addNewRandomTweets = () => {
+        const randomTweets = [
+            "Acabei de entrar no clone do Twitter! Estou animado para me conectar com todos aqui. 👋 #NovoUsuário",
+            "Caralhoooooo!!!! O Vasco da Gama está praticando muito futebol essa noite em São Januário, EU VOU GOZAAAARRRR!!!! VAAAMOOO #5X0VASCAO",
+            "O Vasco da Gama acaba de assumir a liderança do Brasileirão 2025 e vai rumo ao titulo #PENTADOVASCO",
+            "VITOOOOOOORIA de GABRIEL BORTOLETO em INTERLAGOS, a bordo de uma SAUBER Bortoleto fez a maior corrida de um piloto na F1 #BORBOLETOÉREI #F1NABAND",
+            "É CAMPEÃO, o VASCO DA GAMA ACABA DE SE TORNAR PENTA CAMPEÃO BRASILEIRO DE FUTEBOL #VASCOOOOO",
+        ];
 
-  const addNewRandomTweets =() => {
-    const randomTweets = [
-      'Acabei de entrar no clone do Twitter! Estou animado para me conectar com todos aqui. 👋 #NovoUsuário',
-      'Caralhoooooo!!!! O Vasco da Gama está praticando muito futebol essa noite em São Januário, EU VOU GOZAAAARRRR!!!! VAAAMOOO #5X0VASCAO',
-      'O Vasco da Gama acaba de assumir a liderança do Brasileirão 2025 e vai rumo ao titulo #PENTADOVASCO',
-      'VITOOOOOOORIA de GABRIEL BORTOLETO em INTERLAGOS, a bordo de uma SAUBER Bortoleto fez a maior corrida de um piloto na F1 #BORBOLETOÉREI #F1NABAND',
-      'É CAMPEÃO, o VASCO DA GAMA ACABA DE SE TORNAR PENTA CAMPEÃO BRASILEIRO DE FUTEBOL #VASCOOOOO',
-      ]
+        const randomTweet =
+            randomTweets[Math.floor(Math.random() * randomTweets.length)];
 
-      const randomTweet = randomTweets[Math.floor(Math.random() * randomTweets.length)]
+        addNewTweet(randomTweet, Math.random() > 0.7);
+    };
 
-      addNewTweet(randomTweet, Math.random() > 0.7 )
+    const addNewTweet = (content, includeImage = false) => {
+        const NewTweet = {
+            id: v4(),
+            name: "User",
+            username: `user${Math.floor(Math.random() * 1000)}`,
+            avatar: getAvatar(
+                `user${Math.floor(Math.random() * 1000)}@email.com`
+            ),
+            content,
+            time: new Date().toLocaleDateString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+            }),
+            image: includeImage ? getRandomImage() : null,
+            likes: 0,
+            retweets: 0,
+            comments: 0,
+        };
 
-  }
+        setTweets((prevTweets) => [NewTweet, ...prevTweets]);
+    };
 
-  const addNewTweet = (content, includeImage = false) => {
-    const NewTweet = {
-      id: v4(),
-      name: "User",
-      username: `user${Math.floor(Math.random() * 1000)}`,
-      avatar: getAvatar(`user${Math.floor(Math.random() * 1000)}@email.com`),
-      content, 
-      time: new Date().toLocaleDateString([],
-        {
-          hour: '2-digit',
-          minute: '2-digit'
-        }),
-        image: includeImage ? getRandomImage() : null,
-        likes: 0,
-        retweets: 0,
-        comments: 0
-    }
+    return (
+        <>
+            <div className="flex mx-auto max-w-7xl">
+                <Sidebar />
+                <main className="flex-grow border-l border-r border-gray-700 max-w-xl">
+                    <header className="sticky top-0 z-10 bg-twitter-background bg-opcacity-80 backdrop-blur-sm">
+                        <h2 className="px-4 py-3 text-xl font-bold">For You</h2>
+                    </header>
+                    <TwitterForm
+                        onTweet={(content) =>
+                            addNewTweet(content, Math.random() > 0.6)
+                        }
+                    />
+                    <div>
+                        {tweets.map((tweet) => (
+                            <Tweet key={tweets.id} tweet={tweet} />
+                        ))}
+                    </div>
+                </main>
+                <aside className="hidden xl:block w-80 px-4">
+                    <div className="sticky top-0 pt-2">
+                        <div className="relative w-full">
+                            <FontAwesomeIcon
+                                icon={faSearch}
+                                className="absolute top-1/2 left-4 text-gray-500 transform -translate-y-1/2"
+                            />
+                            <input
+                                placeholder="Search Twitter"
+                                className="w-full bg-gray-800 text-white rounded-full outline-none py-2 pl-10 pr-4"
+                            />
+                        </div>
 
-    setTweets( (prevTweets) => [NewTweet, ...prevTweets] )
-  }
-
-  return (
-    <>
-      <div className="flex mx-auto max-w-7xl">
-        <Sidebar />
-        <main className="flex-grow border-l border-r border-gray-700 max-w-xl">
-        <header className="sticky top-0 z-10 bg-twitter-background bg-opcacity-80 backdrop-blur-sm">
-          <h2 className="px-4 py-3 text-xl font-bold">For You</h2>
-        </header>
-        <TwitterForm onTweet = {(content) => addNewTweet(content, Math.random() > 0.6)}/>
-        <div>
-          {tweets.map(tweet => (
-            <Tweet key={tweets.id} tweet={tweet}/>
-          ))}
-        </div>
-      </main>
-      <aside className="hidden xl:block w-80 px-4">
-        <div className="sticky top-0 pt-2">
-          <div className="relative">
-            <FontAwesomeIcon icon={faSearch} className="absolute top-3 left-3 text-gray-500"/>
-            <input placeholder="Search Twitter" className="w-full bg-gray-800 text-white rounded-full outline-none py-2 pl-19 pr-4"/>
-          </div>
-
-          <div className="bg-gray-800 rounded-xl mt-4 p-4">
-            <h2 className="font-bold text-xl mb-4">Subscribe to Premium</h2>
-            <p className="text-gray-500 mb-4">Subscribe to unlock new features and if eligible, receive a share of ads revenue.</p>
-            <button className="bg-twitter-blue text-white font-bold py-2 px-4 rounded-full hover:bg-blue-600 transition duration-200">Subscribe</button>
-          </div>
-          <div className="bg-gray-800 rounded-xl mt-4 p-4">
-            <h2 className="font-bold text-xl mb-4">Whats happening</h2> 
-            <TrendItem category='NFL - LIFE' name='Cardinals at Bills' tweetCount="1,342"/>
-            <TrendItem category='Sports - Trending' name='Kyle Dugger' tweetCount="1,342"/>
-            <TrendItem category='Sports - Trending' name='Anthony Richardson' tweetCount="13,445"/>
-            <TrendItem category='Sports - Trending' name='Bryce Young' tweetCount="5,455"/>
-            <TrendItem category='Sports - Trending' name='Daboll' tweetCount="1,342"/>
-          </div>
-          <div className="bg-gray-800 rounded-xl mt-4 p-4">
-            <h2 className="font-bold text-xl mb-4">Who to follow</h2>
-            <FollowItem name="Bill Gates" username="BillGates"/>
-            <FollowItem name="Will Smith" username="WillS"/>
-          </div>
-        </div>
-      </aside>
-      </div>
-    </>
-  )
+                        <div className="bg-gray-800 rounded-xl mt-4 p-4">
+                            <h2 className="font-bold text-xl mb-4">
+                                Subscribe to Premium
+                            </h2>
+                            <p className="text-gray-500 mb-4">
+                                Subscribe to unlock new features and if
+                                eligible, receive a share of ads revenue.
+                            </p>
+                            <button className="bg-twitter-blue text-white font-bold py-2 px-4 rounded-full hover:bg-blue-600 transition duration-200">
+                                Subscribe
+                            </button>
+                        </div>
+                        <div className="bg-gray-800 rounded-xl mt-4 p-4">
+                            <h2 className="font-bold text-xl mb-4">
+                                Whats happening
+                            </h2>
+                            <TrendItem
+                                category="NFL - LIFE"
+                                name="Cardinals at Bills"
+                                tweetCount="1,342"
+                            />
+                            <TrendItem
+                                category="Sports - Trending"
+                                name="Kyle Dugger"
+                                tweetCount="1,342"
+                            />
+                            <TrendItem
+                                category="Sports - Trending"
+                                name="Anthony Richardson"
+                                tweetCount="13,445"
+                            />
+                            <TrendItem
+                                category="Sports - Trending"
+                                name="Bryce Young"
+                                tweetCount="5,455"
+                            />
+                            <TrendItem
+                                category="Sports - Trending"
+                                name="Daboll"
+                                tweetCount="1,342"
+                            />
+                        </div>
+                        <div className="bg-gray-800 rounded-xl mt-4 p-4">
+                            <h2 className="font-bold text-xl mb-4">
+                                Who to follow
+                            </h2>
+                            <FollowItem
+                                name="Bill Gates"
+                                username="BillGates"
+                            />
+                            <FollowItem name="Will Smith" username="WillS" />
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </>
+    );
 }
 
-export default App
+export default App;
