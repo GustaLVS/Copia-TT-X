@@ -4,7 +4,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./index.css";
 import App from "./pages/home/App"; 
 import Login from "./pages/Cadastro/Login"; 
-import Logar from "./pages/Cadastro/Logar"; 
+import Logar from "./pages/Cadastro/Logar";
+import Perfil from "./pages/Perfil/perfil";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -13,6 +14,7 @@ createRoot(document.getElementById("root")).render(
         <Route path="/" element={<App />} /> 
         <Route path="/login" element={<Login />} /> 
         <Route path="/logar" element={<Logar />} /> 
+        <Route path="/perfil" element={<Perfil />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>
