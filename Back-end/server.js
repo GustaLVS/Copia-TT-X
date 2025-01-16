@@ -1,7 +1,8 @@
 import express from "express";
 import { PrismaClient } from "@prisma/client";
-import bcrypt from 'bcrypt';
-import cors from 'cors';
+import { ObjectId } from "mongodb";
+import bcrypt from "bcrypt";
+import cors from "cors";
 
 const prisma = new PrismaClient();
 
@@ -9,7 +10,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-app.post('/usuarios', async (req, res) => {
+app.post("/usuarios", async (req, res) => {
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
     await prisma.user.create({
@@ -17,11 +18,11 @@ app.post('/usuarios', async (req, res) => {
             email: req.body.email,
             name: req.body.name,
             age: req.body.age,
-            password: hashedPassword, 
+            password: hashedPassword,
         },
     });
 
-    res.status(201).json({ message: 'Usuário criado com sucesso!' });
+    res.status(201).json({ message: "Usuário criado com sucesso!" });
 });
 
 app.get("/usuarios", async (req, res) => {
@@ -58,7 +59,7 @@ app.put("/usuarios/:id", async (req, res) => {
     res.status(201).json(req.body);
 });
 
-app.delete('/usuarios/:id', async (req, res) => {
+app.delete("/usuarios/:id", async (req, res) => {
     await prisma.user.delete({
         where: {
             id: req.params.id,
@@ -68,7 +69,7 @@ app.delete('/usuarios/:id', async (req, res) => {
     res.status(200).json({ message: "Usuário deletado" });
 });
 
-app.post('/login', async (req, res) => {
+app.post("/login", async (req, res) => {
     const { email, password } = req.body;
 
     const user = await prisma.user.findUnique({
@@ -99,7 +100,33 @@ app.listen(3000, () => {
     console.log("Servidor rodando na porta 3000");
 });
 
+app.get("/usuarios/:id", async (req, res) => {
+    const { id } = req.params;
 
+    try {
+        if (!ObjectId.isValid(id)) {
+            return res
+                .status(400)
+                .json({
+                    error: "ID inválido. O ID deve ser um ObjectId válido (24 caracteres hexadecimais).",
+                });
+        }
+        const user = await prisma.user.findUnique({
+            where: { id: id },
+        });
+
+        if (!user) {
+            return res.status(404).json({ error: "Usuário não encontrado." });
+        }
+
+        res.status(200).json(user);
+    } catch (error) {
+        console.error("Erro ao buscar usuário:", error);
+        res.status(500).json({
+            error: "Erro no servidor ao buscar o usuário.",
+        });
+    }
+});
 /*
 BANCO DE DADOS
 
